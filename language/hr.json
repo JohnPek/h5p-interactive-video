@@ -456,7 +456,7 @@
         },
         {
           "label": "answered",
-          "default": "@answered answered!"
+          "default": "@answered answered"
         }
       ]
     }

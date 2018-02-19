@@ -21,6 +21,7 @@ class endscreen extends H5P.EventDispatcher {
     super();
 
     this.STYLE_BASE = 'h5p-interactive-video-endscreen';
+    this.STYLE_BUTTON_HIDDEN = 'h5p-interactive-video-endscreen-top-button-submit-hidden';
 
     this.parent = parent;
     this.l10n = $.extend({
@@ -75,6 +76,7 @@ class endscreen extends H5P.EventDispatcher {
     // Submit button
     this.$endscreenTopButton = $('<div/>', {class: this.STYLE_BASE + '-top-button'})
       .append(H5P.JoubelUI.createButton({class: this.STYLE_BASE + '-top-button-submit', html: this.l10n.submitButton}))
+      .addClass(this.STYLE_BUTTON_HIDDEN)
       .click((event) => {
         this.handleSubmit();
         event.preventDefault();
@@ -88,13 +90,6 @@ class endscreen extends H5P.EventDispatcher {
         }
       });
 
-    // Submitted message
-    this.$endscreenTopSubmittedMessage = $('<div/>', {class: this.STYLE_BASE + '-top-text', html: this.l10n.submitMessage});
-
-    // Container with description and  submit button/submitted message
-    this.$endscreenTopRight = $('<div/>', {class: this.STYLE_BASE + '-top-right'})
-      .append([$endscreenTopTitle, this.$endscreenTopText]);
-
     // Title row for the table at the bottom
     this.$endscreenBottomTitle = $('<div/>', {class: this.STYLE_BASE + '-bottom-title'})
       .append($('<div/>', {class: this.STYLE_BASE + '-bottom-title-left', 'html': this.l10n.tableRowAnswered}))
@@ -107,7 +102,8 @@ class endscreen extends H5P.EventDispatcher {
     this.$endscreen = $('<div/>', {class: this.STYLE_BASE})
       .append($('<div/>', {class: this.STYLE_BASE + '-top'})
         .append($('<div/>', {class: this.STYLE_BASE + '-top-left'}))
-        .append(this.$endscreenTopRight))
+        .append($('<div/>', {class: this.STYLE_BASE + '-top-right'})
+          .append([$endscreenTopTitle, this.$endscreenTopText, this.$endscreenTopButton])))
       .append($('<div/>', {class: this.STYLE_BASE + '-bottom'})
         .append(this.$endscreenBottomTitle)
         .append(this.$endscreenBottomTable));
@@ -121,8 +117,11 @@ class endscreen extends H5P.EventDispatcher {
    * a 'completed' xAPI statement for parent (IV) each time.
    */
   handleSubmit () {
-    this.$endscreenTopButton.detach();
-    this.$endscreenTopRight.append(this.$endscreenTopSubmittedMessage);
+    if (this.$endscreenTopButton.hasClass(this.STYLE_BUTTON_HIDDEN)) {
+      return;
+    }
+    this.$endscreenTopButton.addClass(this.STYLE_BUTTON_HIDDEN);
+    this.$endscreenTopText.html('<span class="h5p-interactive-video-endscreen-top-text-submitted">' + this.l10n.submitMessage + '</span>');
 
     this.answered.forEach((interaction) => {
       const id = interaction.getSubcontentId();
@@ -168,12 +167,12 @@ class endscreen extends H5P.EventDispatcher {
    * @return {jQuery} DOM element for the table row.
    */
   buildTableRow (time, title, score = this.l10n.answered) {
-    const hoverClass = (this.parent.skippingPrevented()) ? '' : ' ' + this.STYLE_BASE + '-pointable';
+    //const hoverClass = (this.parent.skippingPrevented()) ? '' : ' ' + this.STYLE_BASE + '-pointable';
 
     return $('<div/>', {class: this.STYLE_BASE + '-bottom-table-row'})
-      .append($('<div/>', {class: this.STYLE_BASE + '-bottom-table-row-time' + hoverClass, html: this.parent.humanizeTime(time)})
+      .append($('<div/>', {class: this.STYLE_BASE + '-bottom-table-row-time', html: this.parent.humanizeTime(time)})
         .click(() => {this.jump(time);}))
-      .append($('<div/>', {class: this.STYLE_BASE + '-bottom-table-row-title' + hoverClass, html: title}))
+      .append($('<div/>', {class: this.STYLE_BASE + '-bottom-table-row-title', html: title}))
         .click(() => {this.jump(time);})
       .append($('<div/>', {class: this.STYLE_BASE + '-bottom-table-row-score', html: score || this.l10n.tableAnswered}));
   }
@@ -221,9 +220,8 @@ class endscreen extends H5P.EventDispatcher {
     this.$endscreenTopText.html(this.l10n.information.replace('@answered', number));
 
     // Only show submit button (again) if there are answered interactions
-    if (number > 0 && this.$endscreenTopRight.has('.h5p-interactive-video-endscreen-top-button')) {
-      this.$endscreenTopSubmittedMessage.detach();
-      this.$endscreenTopRight.append(this.$endscreenTopButton);
+    if (number > 0) {
+      this.$endscreenTopButton.removeClass(this.STYLE_BUTTON_HIDDEN);
     }
   }
 

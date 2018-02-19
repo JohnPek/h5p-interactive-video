@@ -999,7 +999,7 @@
         "type": "text",
         "label": "Answered label (@answered will be replaced with the number of answered questions)",
         "importance": "low",
-        "default": "@answered answered!",
+        "default": "@answered answered",
         "optional": true
       },
       {
@@ -1007,7 +1007,7 @@
         "type": "text",
         "label": "Endcard title",
         "importance": "low",
-        "default": "@answered Questions answered",
+        "default": "@answered Question(s) answered",
         "description": "@answered will be replaced by the number of answered questions.",
         "optional": true
       },
