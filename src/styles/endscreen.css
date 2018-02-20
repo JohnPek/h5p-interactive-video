@@ -171,11 +171,9 @@
   border-color: #2b2929;
   border-bottom-style: solid;
 }
-.h5p-interactive-video-endscreen-bottom-table-row:hover > .h5p-interactive-video-endscreen-bottom-table-row-time,
-.h5p-interactive-video-endscreen-bottom-table-row:hover > .h5p-interactive-video-endscreen-bottom-table-row-title,
-.h5p-interactive-video-endscreen-bottom-table-row:hover > .h5p-interactive-video-endscreen-bottom-table-row-score {
+.h5p-interactive-video-endscreen-bottom-table-row:hover {
   cursor: pointer;
-  color: #2a2728;
+  background: #2a2728;
 }
 .h5p-interactive-video-endscreen-bottom-table-row-time {
   text-align: right;
