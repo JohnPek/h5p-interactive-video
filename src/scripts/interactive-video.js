@@ -1412,6 +1412,10 @@ InteractiveVideo.prototype.addEndscreen = function (id, tenth) {
 
   var $endscreenMarker;
   if (!this.editor) {
+    // This fill fix the problem of sending VIDEO.ENDED before getDuration() has been reached.
+    if (self.getDuration() - tenth < 1) {
+      tenth = self.getDuration();
+    }
     $endscreenMarker = self.endscreensMap[tenth] = true;
     return;
   }
