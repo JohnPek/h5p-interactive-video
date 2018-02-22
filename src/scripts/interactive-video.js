@@ -259,6 +259,14 @@ function InteractiveVideo(params, id, contentData) {
 
         self.complete();
 
+        // Open final endscreen if necessary
+        const answeredTotal = self.interactionsState.filter(function (a) {
+          return a === 'answered';
+        }).length;
+        if (self.endscreensMap[self.getDuration()] && answeredTotal > 0) {
+          self.toggleEndscreen(true);
+        }
+
         if (loopVideo) {
           self.video.play();
           // we must check the parameter because the video might have started at previousState.progress
@@ -2790,14 +2798,14 @@ InteractiveVideo.prototype.updateInteractions = function (time) {
     }
 
     // Check for endscreen markers incl. helper functions to keep the code a little cleaner
-    const finalEndscreenHit = function () {
-      // This one is needed because the final tenth value can be smaller than self.getDuration()
-      return self.currentState === H5P.Video.ENDED && self.endscreensMap[self.getDuration()];
-    };
     const regularEndscreenHit = function () {
       return self.endscreensMap !== undefined && self.endscreensMap[tenth] !== undefined && self.currentState !== InteractiveVideo.SEEKING;
     };
-    if (finalEndscreenHit() || regularEndscreenHit()) {
+    const answeredTotal = self.interactionsState.filter(function(a) {
+      return a === 'answered';
+    }).length;
+
+    if (regularEndscreenHit() && answeredTotal > 0) {
       self.toggleEndscreen(true);
     }
   }
